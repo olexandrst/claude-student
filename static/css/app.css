@@ -584,4 +584,3 @@ button.schedule__day { border: 0; background: transparent; font-family: inherit;
 button.schedule__day:hover { background: var(--neutral-tint); }
 button.schedule__day.is-today:hover { background: var(--grad-brand); filter: brightness(.95); }
 button.schedule__day.is-selected { background: var(--ink); color: var(--on-brand); box-shadow: var(--shadow-card); }
-.schedule.has-selection .is-dim { opacity: .35; }

@@ -553,10 +553,8 @@
     var selDay = null;
     function renderDay() {
       var grid = $("#scheduleGrid"), box = $("#dayDetail");
-      grid.classList.toggle("has-selection", selDay !== null);
       $$(".schedule__day, .schedule__cell").forEach(function (el) {
         var on = selDay !== null && +el.dataset.day === selDay;
-        el.classList.toggle("is-dim", selDay !== null && !on);
         if (el.classList.contains("schedule__day")) {
           el.classList.toggle("is-selected", on);
           el.setAttribute("aria-pressed", String(on));
@@ -575,6 +573,7 @@
           '<span class="body-sm muted-alt">' + esc(l.kind) + ' · ' + (l.room === "Онлайн" ? "онлайн" : "ауд. " + esc(l.room)) + ' · ' + esc(courseTeacher(l.course)) + '</span></div></div>';
       }).join("") || '<p class="body-sm muted-alt">У цей день пар немає. Можна відпочити.</p>';
       box.hidden = false;
+      box.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
     $$("button.schedule__day").forEach(function (b) {
       b.onclick = function () {
