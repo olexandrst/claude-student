@@ -18,7 +18,7 @@
 <div class="card schedule-card">
   <div class="schedule" id="scheduleGrid">
     <div class="schedule__corner body-sm muted">Пара</div>
-    {% for d in days %}<div class="schedule__day" data-day="{{ loop.index0 }}">{{ d }}</div>{% endfor %}
+    {% for d in days %}<button type="button" class="schedule__day" data-day="{{ loop.index0 }}" aria-pressed="false" title="Показати лише цей день">{{ d }}</button>{% endfor %}
     {% for p in pairs %}
       <div class="schedule__time"><b>{{ p.n }}</b><span>{{ p.start }}–{{ p.end }}</span></div>
       {% for d in days %}
@@ -40,6 +40,11 @@
     {% endfor %}
   </div>
 </div>
+
+<section class="card section-sm" id="dayDetail" hidden aria-live="polite">
+  <div class="card__head"><h2 class="title-card" id="dayTitle"></h2><button class="link-btn" type="button" id="dayClose">Показати весь тиждень</button></div>
+  <div class="stack-12" id="dayList"></div>
+</section>
 
 <div class="grid grid-3 section-sm">
   <div class="legend"><span class="lesson-dot lesson-dot--lec"></span> Лекція</div>

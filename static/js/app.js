@@ -550,7 +550,41 @@
         });
       }
     }
-    $$(".segmented__btn[data-week]").forEach(function (b) { b.onclick = function () { shown = b.dataset.week; apply(); }; });
+    var selDay = null;
+    function renderDay() {
+      var grid = $("#scheduleGrid"), box = $("#dayDetail");
+      grid.classList.toggle("has-selection", selDay !== null);
+      $$(".schedule__day, .schedule__cell").forEach(function (el) {
+        var on = selDay !== null && +el.dataset.day === selDay;
+        el.classList.toggle("is-dim", selDay !== null && !on);
+        if (el.classList.contains("schedule__day")) {
+          el.classList.toggle("is-selected", on);
+          el.setAttribute("aria-pressed", String(on));
+        }
+      });
+      if (selDay === null) { box.hidden = true; return; }
+      var list = (SEED.schedule || []).filter(function (e) {
+        return e.day === selDay && (e.week === "both" || e.week === shown);
+      }).sort(function (a, b) { return a.pair - b.pair; });
+      var days = ["Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця"];
+      $("#dayTitle").textContent = days[selDay] + " · " + (shown === "num" ? "чисельник" : "знаменник") + " · пар: " + list.length;
+      $("#dayList").innerHTML = list.map(function (l) {
+        var p = pairByN(l.pair);
+        return '<div class="lesson-row"><div class="lesson-row__time">' + p.start + '<span>' + p.end + '</span></div>' +
+          '<div class="lesson-row__main"><span class="title-item">' + esc(courseTitle(l.course)) + '</span>' +
+          '<span class="body-sm muted-alt">' + esc(l.kind) + ' · ' + (l.room === "Онлайн" ? "онлайн" : "ауд. " + esc(l.room)) + ' · ' + esc(courseTeacher(l.course)) + '</span></div></div>';
+      }).join("") || '<p class="body-sm muted-alt">У цей день пар немає. Можна відпочити.</p>';
+      box.hidden = false;
+    }
+    $$("button.schedule__day").forEach(function (b) {
+      b.onclick = function () {
+        var d = +b.dataset.day;
+        selDay = selDay === d ? null : d;
+        renderDay();
+      };
+    });
+    $("#dayClose").onclick = function () { selDay = null; renderDay(); };
+    $$(".segmented__btn[data-week]").forEach(function (b) { b.onclick = function () { shown = b.dataset.week; apply(); if (selDay !== null) renderDay(); }; });
     apply();
 
     $("#icsBtn").onclick = function () {
