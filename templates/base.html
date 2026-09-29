@@ -1,0 +1,124 @@
+{% from "_icons.html" import icon %}<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Кабінет студента{% endblock %} · {{ university.name }}</title>
+  <meta name="description" content="Прототип кабінету студента університету «Клодитет»">
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  {% if page %}
+  <script>
+    /* Охоронець сесії: без входу — на сторінку логіну */
+    try {
+      if (!sessionStorage.getItem("klod.session") && !localStorage.getItem("klod.session")) {
+        location.replace("{{ url_for('login') }}?next=" + encodeURIComponent(location.pathname.split("/").pop()));
+      }
+    } catch (e) {}
+  </script>
+  {% endif %}
+</head>
+<body data-page="{{ page or 'login' }}">
+{% block body %}
+<a class="skip-link" href="#main">Перейти до вмісту</a>
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand" href="{{ url_for('dashboard') }}">
+      <span class="brand__mark">К</span>
+      <span class="brand__text">
+        <span class="brand__name">{{ university.name }}</span>
+        <span class="brand__sub">КАБІНЕТ СТУДЕНТА</span>
+      </span>
+    </a>
+    <button class="icon-btn nav-toggle" type="button" aria-label="Меню" aria-expanded="false" aria-controls="mainnav">{{ icon('menu') }}</button>
+    <nav class="mainnav" id="mainnav" aria-label="Основна навігація">
+      {% for item in nav %}
+      <a class="pill{% if page == item.endpoint %} is-active{% endif %}" href="{{ url_for(item.endpoint) }}"{% if page == item.endpoint %} aria-current="page"{% endif %}>
+        <span class="pill__ico">{{ icon(item.icon, 18) }}</span>{{ item.title }}
+        {% if item.endpoint == 'messages' %}<span class="count" data-count="messages" hidden></span>{% endif %}
+        {% if item.endpoint == 'assignments' %}<span class="count" data-count="assignments" hidden></span>{% endif %}
+      </a>
+      {% endfor %}
+    </nav>
+    <div class="topbar__actions">
+      <div class="dropdown">
+        <button class="icon-btn" type="button" id="notifBtn" aria-label="Сповіщення" aria-haspopup="true" aria-expanded="false">
+          {{ icon('bell') }}<span class="dot" id="notifDot" hidden></span>
+        </button>
+        <div class="dropdown__panel notif" id="notifPanel" hidden>
+          <div class="dropdown__head">
+            <span class="title-item">Сповіщення</span>
+            <button class="link-btn" type="button" id="notifReadAll">Позначити всі прочитаними</button>
+          </div>
+          <ul class="notif__list" id="notifList"></ul>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="user-btn" type="button" id="userBtn" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar" data-avatar>{{ student.initials }}</span>
+          <span class="user-btn__text">
+            <span class="user-btn__name">{{ student.first_name }} {{ student.last_name }}</span>
+            <span class="user-btn__sub">{{ student.group }} · {{ student.course }} курс</span>
+          </span>
+        </button>
+        <div class="dropdown__panel usermenu" id="userPanel" hidden>
+          <a class="usermenu__item" href="{{ url_for('profile') }}">{{ icon('user', 18) }} Профіль і налаштування</a>
+          <a class="usermenu__item" href="{{ url_for('grades') }}">{{ icon('graduation', 18) }} Залікова книжка</a>
+          <button class="usermenu__item" type="button" data-action="logout">{{ icon('logout', 18) }} Вийти</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="page">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <span>© 2026 {{ university.full_name }} · Прототип, усі дані вигадані</span>
+  <span class="footer__status"><span class="status-dot"></span> Усі сервіси працюють · <span id="apiLatency">API —</span></span>
+</footer>
+
+<button class="fab" type="button" id="assistantBtn" aria-label="Відкрити Клод-асистента">{{ icon('sparkle', 24) }}</button>
+<section class="assistant" id="assistant" hidden aria-label="Клод-асистент">
+  <div class="assistant__head">
+    <div>
+      <div class="title-card">Клод-асистент</div>
+      <div class="body-sm muted">Відповідаю на питання про навчання</div>
+    </div>
+    <button class="icon-btn icon-btn--flat" type="button" id="assistantClose" aria-label="Закрити">{{ icon('x', 18) }}</button>
+  </div>
+  <div class="assistant__log" id="assistantLog" aria-live="polite"></div>
+  <div class="assistant__chips" id="assistantChips">
+    <button class="chip" type="button">Яка в мене наступна пара?</button>
+    <button class="chip" type="button">Які найближчі дедлайни?</button>
+    <button class="chip" type="button">Який мій середній бал?</button>
+  </div>
+  <form class="assistant__form" id="assistantForm">
+    <label class="sr-only" for="assistantInput">Ваше питання</label>
+    <input class="input" id="assistantInput" autocomplete="off" placeholder="Поставте питання…">
+    <button class="btn btn--primary btn--icon" type="submit" aria-label="Надіслати">{{ icon('send', 18) }}</button>
+  </form>
+</section>
+{% endblock %}
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="modal" id="modal" hidden>
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal__head">
+      <h2 class="heading-strong" id="modalTitle"></h2>
+      <button class="icon-btn icon-btn--flat" type="button" data-close aria-label="Закрити">{{ icon('x', 18) }}</button>
+    </div>
+    <div class="modal__body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>window.SEED = {{ seed|tojson }};</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

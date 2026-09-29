@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Завдання{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="display-lg">Мої <span class="accent">завдання</span></h1>
+  <p class="lead">Здавайте роботи онлайн — викладач отримає сповіщення одразу після завантаження</p>
+</div>
+
+<div class="toolbar toolbar--wrap">
+  <div class="tabs" role="tablist" aria-label="Фільтр за статусом" id="statusTabs">
+    <button class="pill is-active" data-status="active" role="tab" aria-selected="true">Активні</button>
+    <button class="pill" data-status="submitted" role="tab" aria-selected="false">На перевірці</button>
+    <button class="pill" data-status="graded" role="tab" aria-selected="false">Оцінені</button>
+    <button class="pill" data-status="all" role="tab" aria-selected="false">Усі</button>
+  </div>
+  <label class="sr-only" for="courseFilter">Дисципліна</label>
+  <select class="input input--select" id="courseFilter">
+    <option value="">Усі дисципліни</option>
+  </select>
+</div>
+
+<div class="stack-16 section-sm" id="assignmentList"></div>
+{% endblock %}

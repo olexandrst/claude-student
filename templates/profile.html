@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Профіль{% endblock %}
+{% block content %}
+<section class="hero-panel profile-hero">
+  <span class="avatar avatar--xl" data-avatar>{{ student.initials }}</span>
+  <div class="stack-8">
+    <span class="badge-hero"><span class="badge-hero__dot"></span>Студент · {{ student.course }} курс</span>
+    <h1 class="display-xl">{{ student.last_name }} <span class="accent">{{ student.first_name }}</span> {{ student.patronymic }}</h1>
+    <p class="body-lg">{{ student.faculty }} · група {{ student.group }}</p>
+  </div>
+</section>
+
+<div class="grid grid-2 section">
+  <section class="card">
+    <div class="card__head"><h2 class="title-card">Навчальні дані</h2><span class="tag">{{ icon('lock', 14) }} Змінює деканат</span></div>
+    <dl class="dl">
+      <dt>Студентський квиток</dt><dd>{{ student.student_id }}</dd>
+      <dt>Залікова книжка</dt><dd>{{ student.record_book }}</dd>
+      <dt>Спеціальність</dt><dd>{{ student.specialty }}</dd>
+      <dt>Освітня програма</dt><dd>{{ student.program }}</dd>
+      <dt>Ступінь</dt><dd>{{ student.degree }}, {{ student.enrolled }}–{{ student.graduation }}</dd>
+      <dt>Форма навчання</dt><dd>{{ student.study_form }}</dd>
+      <dt>Фінансування</dt><dd>{{ student.funding }}</dd>
+      <dt>Куратор</dt><dd>{{ student.curator }}</dd>
+      <dt>Декан</dt><dd>{{ student.dean }}</dd>
+      <dt>Дата народження</dt><dd>{{ student.birth_date }}</dd>
+    </dl>
+  </section>
+
+  <section class="card">
+    <div class="card__head"><h2 class="title-card">Контакти</h2></div>
+    <form class="stack-16" id="contactForm">
+      <div class="field">
+        <label for="uniEmail">Університетська пошта</label>
+        <input class="input" id="uniEmail" value="{{ student.email }}" readonly>
+      </div>
+      <div class="field">
+        <label for="pEmail">Особиста пошта</label>
+        <input class="input" id="pEmail" name="personal_email" type="email" required>
+      </div>
+      <div class="field">
+        <label for="phone">Телефон</label>
+        <input class="input" id="phone" name="phone" type="tel" required pattern="^\+?[0-9 ()-]{10,18}$">
+      </div>
+      <div class="field">
+        <label for="address">Адреса проживання</label>
+        <input class="input" id="address" name="address" required>
+      </div>
+      <button class="btn btn--primary" type="submit">Зберегти зміни</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <div class="card__head"><h2 class="title-card">Безпека</h2></div>
+    <form class="stack-16" id="passwordForm">
+      <div class="field">
+        <label for="oldPwd">Поточний пароль</label>
+        <input class="input" id="oldPwd" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="field">
+        <label for="newPwd">Новий пароль</label>
+        <input class="input" id="newPwd" type="password" autocomplete="new-password" required minlength="8">
+        <div class="meter meter--sm" aria-hidden="true"><span id="pwdMeter" style="width:0"></span></div>
+        <span class="body-sm muted" id="pwdHint">Мінімум 8 символів, цифри та великі літери</span>
+      </div>
+      <div class="field">
+        <label for="newPwd2">Повторіть новий пароль</label>
+        <input class="input" id="newPwd2" type="password" autocomplete="new-password" required>
+      </div>
+      <button class="btn btn--primary" type="submit">Змінити пароль</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <div class="card__head"><h2 class="title-card">Сповіщення</h2></div>
+    <div class="stack-16" id="prefs">
+      <label class="switch"><input type="checkbox" data-pref="email" checked><span class="switch__track"></span> Дублювати сповіщення на пошту</label>
+      <label class="switch"><input type="checkbox" data-pref="grades" checked><span class="switch__track"></span> Нові оцінки</label>
+      <label class="switch"><input type="checkbox" data-pref="deadlines" checked><span class="switch__track"></span> Нагадування про дедлайни за 48 годин</label>
+      <label class="switch"><input type="checkbox" data-pref="schedule"><span class="switch__track"></span> Зміни в розкладі (Telegram-бот)</label>
+      <label class="switch"><input type="checkbox" data-pref="news"><span class="switch__track"></span> Новини студради</label>
+    </div>
+    <div class="divider"></div>
+    <button class="btn btn--ghost" type="button" id="resetDemo">{{ icon('refresh', 18) }} Скинути демо-дані</button>
+    <p class="body-sm muted">Повертає кабінет до початкового стану: завдання, повідомлення, платежі, заявки.</p>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Бібліотека{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="display-lg">Бібліотека <span class="accent">{{ university.name }}у</span></h1>
+  <p class="lead">Пошук у каталозі, бронювання та продовження книг онлайн</p>
+</div>
+
+<section class="card">
+  <div class="card__head"><h2 class="title-card">Мої книги</h2><span class="body-sm muted">Продовжити можна двічі, на 14 днів</span></div>
+  <div class="list" id="loanList"></div>
+</section>
+
+<section class="section-sm">
+  <div class="toolbar toolbar--wrap">
+    <div class="input-icon input-icon--grow">
+      {{ icon('search', 18) }}
+      <label class="sr-only" for="bookSearch">Пошук у каталозі</label>
+      <input class="input" id="bookSearch" placeholder="Назва або автор">
+    </div>
+    <label class="sr-only" for="topicFilter">Тематика</label>
+    <select class="input input--select" id="topicFilter"><option value="">Усі тематики</option></select>
+    <label class="check"><input type="checkbox" id="onlyAvailable"> Лише в наявності</label>
+  </div>
+  <div class="grid grid-3 section-sm" id="bookGrid"></div>
+  <p class="body-sm muted empty-line" id="bookEmpty" hidden>Нічого не знайдено. Спробуйте інший запит.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Вхід{% endblock %}
+{% block body %}
+<main class="login">
+  <section class="login__hero hero-panel">
+    <div class="brand">
+      <span class="brand__mark brand__mark--lg">К</span>
+      <span class="brand__text">
+        <span class="brand__name">{{ university.name }}</span>
+        <span class="brand__sub">КАБІНЕТ СТУДЕНТА</span>
+      </span>
+    </div>
+    <div class="login__copy">
+      <span class="badge-hero"><span class="badge-hero__dot"></span>{{ university.semester }}</span>
+      <h1 class="display-xl">Кабінет студента <span class="accent">{{ university.name }}</span></h1>
+      <p class="body-lg">Розклад, оцінки, завдання, фінанси й довідки — в одному вікні. Ми зібрали все, що потрібно для навчання, щоб ви витрачали час на знання, а не на пошук інформації.</p>
+      <div class="steps" aria-hidden="true"><span class="is-active"></span><span></span><span></span></div>
+    </div>
+    <div class="grid grid-3 login__stats">
+      <div class="stat stat--plain"><span class="stat-number">12 400+</span><span class="body-sm muted">студентів</span></div>
+      <div class="stat stat--plain"><span class="stat-number">9</span><span class="body-sm muted">факультетів</span></div>
+      <div class="stat stat--plain"><span class="stat-number">1998</span><span class="body-sm muted">рік заснування</span></div>
+    </div>
+  </section>
+
+  <section class="login__side">
+    <form class="card login__form" id="loginForm" novalidate>
+      <div class="stack-8">
+        <h2 class="heading-strong">Вхід до кабінету</h2>
+        <p class="body-sm muted-alt">Використайте корпоративний логін університету</p>
+      </div>
+      <div class="field">
+        <label for="login">Логін</label>
+        <input class="input" id="login" name="login" autocomplete="username" required placeholder="demo">
+      </div>
+      <div class="field">
+        <label for="password">Пароль</label>
+        <div class="input-wrap">
+          <input class="input" id="password" name="password" type="password" autocomplete="current-password" required placeholder="Будь-який пароль">
+          <button class="input-wrap__btn" type="button" id="togglePwd" aria-label="Показати пароль">{{ icon('lock', 18) }}</button>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="remember"> Запам'ятати мене на цьому пристрої</label>
+      <p class="form-error" id="loginError" role="alert" hidden></p>
+      <button class="btn btn--primary btn--lg" type="submit" id="loginSubmit">Увійти</button>
+      <div class="hint">Демо-доступ: логін <b>demo</b>, пароль — будь-який.</div>
+      <div class="login__links">
+        <button class="link-btn" type="button" id="forgotBtn">Забули пароль?</button>
+        <span class="muted body-sm">Підтримка: help@klodytet.edu.ua</span>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

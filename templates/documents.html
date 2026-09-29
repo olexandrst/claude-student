@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Довідки{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="display-lg">Замовлення <span class="accent">довідок</span></h1>
+  <p class="lead">Електронні довідки підписуються КЕП університету і мають таку саму силу, як паперові</p>
+</div>
+
+<div class="grid grid-2-1">
+  <section class="card">
+    <div class="card__head"><h2 class="title-card">Нова заявка</h2></div>
+    <form class="stack-16" id="docForm">
+      <fieldset class="doc-types">
+        <legend class="label-strong upper muted">Тип довідки</legend>
+        {% for t in types %}
+        <label class="radio-card">
+          <input type="radio" name="type" value="{{ t.id }}"{% if loop.first %} checked{% endif %}>
+          <span>
+            <span class="title-item">{{ t.title }}</span>
+            <span class="body-sm muted-alt">{{ t.note }}</span>
+            <span class="tag">{{ t.days }}</span>
+          </span>
+        </label>
+        {% endfor %}
+      </fieldset>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="purpose">Мета / місце подання</label>
+          <input class="input" id="purpose" name="purpose" required placeholder="Наприклад: банк, ЦНАП">
+        </div>
+        <div class="field">
+          <label for="copies">Кількість примірників</label>
+          <input class="input" id="copies" name="copies" type="number" min="1" max="5" value="1">
+        </div>
+      </div>
+      <fieldset class="field">
+        <legend>Формат отримання</legend>
+        <div class="segmented segmented--full">
+          <label class="segmented__btn"><input type="radio" name="delivery" value="Електронна з КЕП" checked> Електронна з КЕП</label>
+          <label class="segmented__btn"><input type="radio" name="delivery" value="Паперова в деканаті"> Паперова в деканаті</label>
+        </div>
+      </fieldset>
+      <label class="check"><input type="checkbox" id="english"> Англійською мовою</label>
+      <button class="btn btn--primary btn--lg" type="submit">Подати заявку</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <div class="card__head"><h2 class="title-card">Мої заявки</h2></div>
+    <div class="list" id="requestList"></div>
+  </section>
+</div>
+{% endblock %}

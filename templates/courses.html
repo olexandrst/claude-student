@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Дисципліни{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="display-lg">Мої <span class="accent">дисципліни</span></h1>
+  <p class="lead">{{ university.semester }} · {{ courses|sum(attribute='ects') }} кредитів ECTS · {{ courses|length }} дисциплін</p>
+</div>
+
+<div class="stack-24">
+  {% for c in courses %}
+  <details class="card course" id="{{ c.id }}">
+    <summary class="course__summary">
+      <span class="tile {{ 'tile--brand' if loop.index is odd else 'tile--dark' }}">{{ icon('book', 24) }}</span>
+      <span class="course__main">
+        <span class="title-card">{{ c.title }}</span>
+        <span class="body-sm muted-alt">{{ c.teacher }}</span>
+      </span>
+      <span class="course__tags">
+        <span class="tag">{{ c.ects }} ECTS</span>
+        <span class="tag">{{ c.control }}</span>
+        <span class="tag tag--tint">{{ c.points }} балів</span>
+      </span>
+      <span class="course__chev">{{ icon('chevron', 20) }}</span>
+    </summary>
+    <div class="course__body">
+      <p class="body-sm muted-alt">{{ c.description }}</p>
+      <div class="grid grid-3">
+        <div>
+          <h3 class="label-strong upper muted">Модулі</h3>
+          <ul class="checklist">
+            {% for m in c.modules %}<li class="{{ 'is-done' if m.done }}">{{ m.title }}</li>{% endfor %}
+          </ul>
+        </div>
+        <div>
+          <h3 class="label-strong upper muted">Контрольні точки</h3>
+          <ul class="points">
+            {% for p in c.control_points %}
+            <li><span>{{ p.title }}</span><b>{{ p.got if p.got is not none else '—' }} / {{ p.max }}</b></li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div>
+          <h3 class="label-strong upper muted">Матеріали</h3>
+          <ul class="files">
+            {% for f in c.materials %}
+            <li>
+              <button class="file" type="button" data-download="{{ f.title }}" data-kind="{{ f.kind }}" data-course="{{ c.title }}">
+                <span class="file__kind">{{ f.kind }}</span>
+                <span class="file__name">{{ f.title }}<small>{{ f.size }}</small></span>
+                {{ icon('download', 18) }}
+              </button>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <div class="course__actions">
+        <a class="btn btn--ghost" href="{{ url_for('messages') }}?to={{ c.teacher|urlencode }}">{{ icon('mail', 18) }} Написати викладачу</a>
+        <a class="btn btn--ghost" href="{{ url_for('assignments') }}?course={{ c.id }}">{{ icon('check', 18) }} Завдання з дисципліни</a>
+        <span class="body-sm muted">Відвідуваність: {{ c.attendance }}%</span>
+      </div>
+    </div>
+  </details>
+  {% endfor %}
+</div>
+
+<section class="section" id="electives">
+  <div class="section-head">
+    <h2 class="display-md accent">Вибіркові дисципліни</h2>
+    <p class="lead">Оберіть дві дисципліни на весняний семестр — запис відкрито до 15 жовтня</p>
+  </div>
+  <div class="grid grid-3" id="electiveGrid">
+    {% for e in electives %}
+    <label class="card elective" data-id="{{ e.id }}">
+      <input type="checkbox" class="elective__check" value="{{ e.id }}">
+      <span class="elective__top">
+        <span class="tile tile--sm {{ 'tile--brand' if loop.index is odd else 'tile--dark' }}">{{ icon('graduation', 20) }}</span>
+        <span class="tag">{{ e.ects }} ECTS</span>
+      </span>
+      <span class="title-card">{{ e.title }}</span>
+      <span class="body-sm muted-alt">{{ e.teacher }}</span>
+      <span class="elective__seats body-sm"><span data-seats>{{ e.seats - e.taken }}</span> із {{ e.seats }} місць вільно</span>
+    </label>
+    {% endfor %}
+  </div>
+  <div class="elective-bar card">
+    <span class="body-sm" id="electiveStatus">Обрано 0 з 2</span>
+    <button class="btn btn--primary" type="button" id="electiveSave" disabled>Підтвердити вибір</button>
+  </div>
+</section>
+{% endblock %}

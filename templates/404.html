@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Сторінку не знайдено{% endblock %}
+{% block body %}
+<main class="notfound">
+  <div class="card notfound__card">
+    <span class="stat-number accent">404</span>
+    <h1 class="heading-strong">Сторінку не знайдено</h1>
+    <p class="body-sm muted-alt">Можливо, її перенесли до іншого розділу кабінету.</p>
+    <a class="btn btn--primary" href="{{ url_for('dashboard') }}">На головну</a>
+  </div>
+</main>
+{% endblock %}

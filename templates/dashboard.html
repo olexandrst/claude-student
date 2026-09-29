@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Головна{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="display-lg">Вітаємо, <span class="accent">{{ student.first_name_vocative }}</span></h1>
+  <p class="lead" id="todayLine">{{ university.semester }}</p>
+</div>
+
+<div class="grid grid-4">
+  <div class="stat">
+    <span class="tile tile--tint">{{ icon('star', 24) }}</span>
+    <div><div class="stat-number">{{ grades.average }}</div><div class="body-sm muted">середній бал за 4 семестри</div></div>
+  </div>
+  <div class="stat">
+    <span class="tile tile--neutral">{{ icon('book', 24) }}</span>
+    <div><div class="stat-number">{{ grades.ects_earned }}</div><div class="body-sm muted">кредитів ECTS із {{ grades.ects_total }}</div></div>
+  </div>
+  <div class="stat">
+    <span class="tile tile--tint">{{ icon('chart', 24) }}</span>
+    <div><div class="stat-number">{{ student.rating_place }}/{{ student.group_size }}</div><div class="body-sm muted">місце в рейтингу групи</div></div>
+  </div>
+  <div class="stat">
+    <span class="tile tile--neutral">{{ icon('check', 24) }}</span>
+    <div><div class="stat-number" id="activeCount">—</div><div class="body-sm muted">активних завдань</div></div>
+  </div>
+</div>
+
+<div class="grid grid-3 section">
+  <section class="card">
+    <div class="card__head">
+      <h2 class="title-card" id="todayTitle">Розклад на сьогодні</h2>
+      <a class="link" href="{{ url_for('schedule') }}">Увесь тиждень</a>
+    </div>
+    <div class="stack-12" id="todayList"><div class="skeleton"></div><div class="skeleton"></div></div>
+  </section>
+
+  <section class="card">
+    <div class="card__head">
+      <h2 class="title-card">Найближчі дедлайни</h2>
+      <a class="link" href="{{ url_for('assignments') }}">Усі завдання</a>
+    </div>
+    <div class="list" id="deadlineList"><div class="skeleton"></div><div class="skeleton"></div></div>
+  </section>
+
+  <section class="card">
+    <div class="card__head"><h2 class="title-card">Оголошення</h2></div>
+    <div class="list">
+      {% for a in announcements %}
+      <article class="list__item">
+        <span class="eyebrow-sm">{{ a.tag }}</span>
+        <span class="title-item">{{ a.title }}</span>
+        <span class="body-sm muted-alt">{{ a.text }}</span>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<section class="section">
+  <div class="section-head">
+    <h2 class="display-md accent">Поточна успішність</h2>
+    <p class="lead">Бали, накопичені з початку семестру, у межах уже доступного максимуму</p>
+  </div>
+  <div class="grid grid-3">
+    {% for c in courses %}
+    <a class="card card--link progress-card" href="{{ url_for('courses') }}#{{ c.id }}">
+      <div class="progress-card__top">
+        <span class="tile tile--sm {{ 'tile--brand' if loop.index is odd else 'tile--dark' }}">{{ icon('book', 20) }}</span>
+        <span class="tag">{{ c.control }} · {{ c.ects }} ECTS</span>
+      </div>
+      <span class="title-card">{{ c.title }}</span>
+      <span class="body-sm muted-alt">{{ c.teacher_short }}</span>
+      <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="{{ c.max_so_far }}" aria-valuenow="{{ c.points }}" aria-label="Бали з дисципліни">
+        <span style="width: {{ (c.points / c.max_so_far * 100)|round|int }}%"></span>
+      </div>
+      <div class="progress-card__foot body-sm"><b>{{ c.points }}</b><span class="muted">з {{ c.max_so_far }} можливих · відвідуваність {{ c.attendance }}%</span></div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

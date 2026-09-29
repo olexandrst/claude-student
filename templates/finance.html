@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Фінанси{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="display-lg">Фінанси <span class="accent">і стипендія</span></h1>
+  <p class="lead">{{ student.funding }} · оплата гуртожитку та додаткових послуг онлайн</p>
+</div>
+
+<div class="grid grid-3">
+  <div class="card finance-hero">
+    <span class="tile tile--brand">{{ icon('wallet', 24) }}</span>
+    <span class="body-sm muted-alt">{{ finance.scholarship.kind }}</span>
+    <span class="stat-number">{{ '{:,}'.format(finance.scholarship.amount).replace(',', ' ') }} грн<small class="muted"> / міс</small></span>
+    <span class="body-sm muted">Призначено до {{ finance.scholarship.until }} · {{ finance.scholarship.card }}</span>
+  </div>
+  <div class="card finance-hero">
+    <span class="tile tile--dark">{{ icon('card', 24) }}</span>
+    <span class="body-sm muted-alt">До сплати</span>
+    <span class="stat-number" id="dueTotal">—</span>
+    <span class="body-sm muted" id="dueNote"></span>
+  </div>
+  <div class="card finance-hero">
+    <span class="tile tile--neutral">{{ icon('calendar', 24) }}</span>
+    <span class="body-sm muted-alt">Наступна виплата стипендії</span>
+    <span class="stat-number">25 жовтня</span>
+    <span class="body-sm muted">Нараховується щомісяця до 25 числа</span>
+  </div>
+</div>
+
+<div class="grid grid-2 section">
+  <section class="card">
+    <div class="card__head"><h2 class="title-card">Рахунки</h2></div>
+    <div class="list" id="invoiceList"></div>
+  </section>
+  <section class="card">
+    <div class="card__head">
+      <h2 class="title-card">Історія операцій</h2>
+      <button class="link-btn" type="button" id="statementBtn">Виписка (CSV)</button>
+    </div>
+    <div class="table-wrap">
+      <table class="table table--compact">
+        <thead><tr><th>Дата</th><th>Операція</th><th class="num">Сума, грн</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

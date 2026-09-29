@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Оцінки{% endblock %}
+{% block content %}
+<div class="page-head page-head--row">
+  <div>
+    <h1 class="display-lg">Залікова <span class="accent">книжка</span></h1>
+    <p class="lead">{{ student.record_book }} · {{ student.specialty }} · {{ student.program }}</p>
+  </div>
+  <div class="toolbar">
+    <button class="btn btn--ghost" type="button" id="csvBtn">{{ icon('download', 18) }} Завантажити CSV</button>
+    <button class="btn btn--ghost" type="button" onclick="window.print()">{{ icon('file', 18) }} Друк</button>
+  </div>
+</div>
+
+<div class="grid grid-4">
+  <div class="stat stat--center"><span class="stat-number">{{ grades.average }}</span><span class="body-sm muted">середній бал (100-бальна)</span></div>
+  <div class="stat stat--center"><span class="stat-number">{{ '%.2f'|format(grades.average / 20) }}</span><span class="body-sm muted">GPA (5-бальна шкала)</span></div>
+  <div class="stat stat--center"><span class="stat-number">{{ grades.ects_earned }}/{{ grades.ects_total }}</span><span class="body-sm muted">кредитів ECTS</span></div>
+  <div class="stat stat--center"><span class="stat-number">{{ student.rating_place }}</span><span class="body-sm muted">місце в рейтингу з {{ student.group_size }}</span></div>
+</div>
+
+<div class="tabs section-sm" role="tablist" aria-label="Семестри">
+  <button class="pill is-active" role="tab" aria-selected="true" data-tab="current">5 семестр (поточний)</button>
+  {% for s in grades.semesters|reverse %}
+  <button class="pill" role="tab" aria-selected="false" data-tab="s{{ loop.revindex }}">{{ s.title.split(' · ')[0] }}</button>
+  {% endfor %}
+</div>
+
+<section class="card tab-panel" data-panel="current">
+  <div class="card__head">
+    <h2 class="title-card">Поточний семестр · прогноз підсумкових балів</h2>
+    <span class="body-sm muted">Змініть очікувані бали за підсумковий контроль — середній перерахується</span>
+  </div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Дисципліна</th><th>ECTS</th><th>Контроль</th><th>Накопичено</th><th>Очікую за підсумковий</th><th>Прогноз</th><th>ECTS</th></tr></thead>
+      <tbody id="forecastBody">
+        {% for c in courses %}
+        {% set final_max = c.control_points[-1].max %}
+        <tr data-ects="{{ c.ects }}" data-control="{{ c.control }}">
+          <td><b>{{ c.title }}</b><div class="body-sm muted">{{ c.teacher_short }}</div></td>
+          <td>{{ c.ects }}</td>
+          <td>{{ c.control }}</td>
+          <td><span data-have>{{ (100 - final_max) * c.points // c.max_so_far }}</span> / {{ 100 - final_max }}</td>
+          <td>
+            <label class="sr-only" for="f-{{ c.id }}">Очікуваний бал: {{ c.title }}</label>
+            <input class="input input--sm" type="number" id="f-{{ c.id }}" min="0" max="{{ final_max }}" value="{{ (final_max * 0.85)|round|int }}" data-final> <span class="muted">/ {{ final_max }}</span>
+          </td>
+          <td><b data-total>—</b></td>
+          <td><span class="grade" data-letter>—</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="forecast">
+    <span class="body-sm muted-alt">Прогнозований середній бал семестру</span>
+    <span class="stat-number" id="forecastAvg">—</span>
+    <span class="body-sm muted-alt" id="forecastNote"></span>
+  </div>
+</section>
+
+{% for s in grades.semesters|reverse %}
+<section class="card tab-panel" data-panel="s{{ loop.revindex }}" hidden>
+  <div class="card__head">
+    <h2 class="title-card">{{ s.title }}</h2>
+    <span class="tag">Середній бал {{ s.average }} · {{ s.ects }} ECTS</span>
+  </div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Дисципліна</th><th>ECTS</th><th>Контроль</th><th>Бал</th><th>Національна шкала</th><th>ECTS</th></tr></thead>
+      <tbody>
+        {% for r in s.rows %}
+        <tr>
+          <td><b>{{ r.title }}</b></td>
+          <td>{{ r.ects }}</td>
+          <td>{{ r.control }}</td>
+          <td><b>{{ r.score }}</b></td>
+          <td>{{ r.national }}</td>
+          <td><span class="grade grade--{{ r.letter|lower }}">{{ r.letter }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endfor %}
+
+<p class="body-sm muted section-sm">Шкала: 90–100 — A (відмінно), 82–89 — B (добре), 74–81 — C (добре), 64–73 — D (задовільно), 60–63 — E (задовільно), менше 60 — FX.</p>
+{% endblock %}
